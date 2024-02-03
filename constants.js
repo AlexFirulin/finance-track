@@ -1,0 +1,1 @@
+export const transactionsView = ['Yearl', 'Monthly', 'Daily']
