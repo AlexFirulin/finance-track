@@ -13,10 +13,26 @@
     <trends color="green" title="Investments" :amount="4000" :lastAmount="3000" :loading="false"/>
     <trends color="red" title="Savings" :amount="1000" :lastAmount="2500" :loading="false"/>
   </section>
+  <section>
+    <Transaction  v-for="transaction in transactions" :key="transaction.id" :transaction="transaction"/>
+  </section>
 </template>
 
 <script setup>
 import { transactionsView } from '~/constants';
 const viewSelected = ref(transactionsView[1])
 
+const supabase = useSupabaseClient()
+const transactions = ref([])
+const {data ,pending } = await useAsyncData('transactions', async()=>{
+  const { data , error} = await supabase
+  .from('transactions')
+  .select()
+  transactions.value = data.value
+
+  if(error) return []
+  return data
+})
+console.log(data.value)
+transactions.value =data.value
 </script>
