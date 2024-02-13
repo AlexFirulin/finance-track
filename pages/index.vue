@@ -31,7 +31,6 @@ const {data ,pending } = await useAsyncData('transactions', async()=>{
   const { data , error} = await supabase
   .from('transactions')
   .select()
-  transactions.value = data.value
 
   if(error) return []
   return data
