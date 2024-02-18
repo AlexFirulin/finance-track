@@ -39,9 +39,7 @@
       </div>
     </div>
     <div>
-      <transaction-modal
-      v-model="isOpen"
-      />
+      <transaction-modal v-model="isOpen" @saved="refreshTransaction()" />
       <UButton icon="i-heroicons-plus-circle"
                color="white"
                variant="solid"
@@ -103,7 +101,7 @@ const fetchTransactions = async () => {
       const { data, error } = await supabase
         .from('transactions')
         .select()
-
+        .order('created_at', { ascending: false })
       if (error) return []
 
       return data
