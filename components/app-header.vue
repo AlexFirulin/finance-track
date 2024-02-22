@@ -8,3 +8,11 @@
     </div>
   </header>
 </template>
+
+<script setup>
+const user = useSupabaseUser()
+
+watch(user, (user) => {
+  if (user) console.log(user)
+}, { immediate: true })
+</script>
