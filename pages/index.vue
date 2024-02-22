@@ -4,7 +4,7 @@
     <div>
       <ClientOnly>
         <UInputMenu v-model="viewSelected"
-                    :options="transactionsView" />
+                    :options="transactionView" />
       </ClientOnly>
     </div>
   </section>
@@ -12,12 +12,12 @@
     <trends color="green"
             title="Income"
             :amount="incomeTotal"
-            :lastAmount="3000"
+            :lastAmount="prevIncomeTotal"
             :loading="pending" />
     <trends color="red"
             title="Expense"
             :amount="expenseTotal"
-            :lastAmount="8000"
+            :lastAmount="prevExpenseTotal"
             :loading="pending" />
     <trends color="green"
             title="Investments"
@@ -39,7 +39,8 @@
       </div>
     </div>
     <div>
-      <transaction-modal v-model="isOpen" @saved="refresh()" />
+      <transaction-modal v-model="isOpen"
+                         @saved="refresh()" />
       <UButton icon="i-heroicons-plus-circle"
                color="white"
                variant="solid"
@@ -69,8 +70,9 @@
 
 <script setup>
 import { transactionView } from '~/constants'
-const selectedView = ref(transactionView[1])
+const viewSelected = ref(transactionView[1])
 const isOpen = ref(false)
+const { current, previous } = useSelectedTimePeriod(viewSelected)
 
 const { pending, refresh, transactions: {
   incomeCount,
@@ -80,7 +82,13 @@ const { pending, refresh, transactions: {
   grouped: {
     byDate
   }
-} } = useFetchTransactions()
+} } = useFetchTransactions(current)
 
-await refresh()
+const { refresh:refreshPrevious, transactions: {
+  incomeTotal: prevIncomeTotal,
+  expenseTotal: prevExpenseTotal,
+
+} } = useFetchTransactions(previous)
+
+await refreshPrevious()
 </script>
