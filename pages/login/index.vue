@@ -1,5 +1,5 @@
 <template>
-  <Ucard v-if="!success">
+  <UCard v-if="!success">
     <template #header>
       Sign in to finance tracker
     </template>
@@ -21,7 +21,7 @@
                :loading="pending"
                :disabled="pending">Sign in</UButton>
     </form>
-  </Ucard>
+  </UCard>
   <UCard v-else>
     <template #header>
       Email has been sand
@@ -39,13 +39,16 @@ const email = ref('')
 const pending = ref(false)
 const toast = useToast()
 const supabase = useSupabaseClient()
+
+useIsUserLoggedIn()
+
 const handleLogin = async () => {
   pending.value = true
     try {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.value,
       options: {
-        redirectTo: 'http://localhost:3000'
+        redirectTo: 'http://localhost:3000/confirm'
       }
     })
     if (error) {
