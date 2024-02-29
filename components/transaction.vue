@@ -25,12 +25,14 @@
 </template>
 
 <script setup>
+import { useAppToast } from "~/composables/useAppToast"
+
 const props = defineProps({
   transaction: Object
 })
 const emit = defineEmits(['deleted'])
 const isLOADING = ref(false)
-const toast = useToast()
+const { toastError, toastSuccess } = useAppToast()
 const supabase = useSupabaseClient()
 const deleteTransaction = async () => {
   isLOADING.value = true
@@ -38,17 +40,13 @@ const deleteTransaction = async () => {
     await supabase.from('transactions')
     .delete()
     .eq('id', props.transaction.id)
-    toast.add({
-      title: 'transaction deleted',
-      icon: 'i-heroicons-check-circle',
-      color:'green'
+    toastSuccess({
+      title: 'transaction deleted'
     })
     emit('deleted', props.transaction.id)
   } catch(error) {
-    toast.add({
-      title: 'transaction deleted',
-      icon: 'i-heroicons-check-circle',
-      color:'red'
+    toastError({
+      title: 'transaction deleted'
     })
   } finally {
     isLOADING.value = false

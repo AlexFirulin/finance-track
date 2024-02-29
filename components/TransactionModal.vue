@@ -61,11 +61,12 @@
 <script setup>
 import { category, transactionsType } from '~/constants.js'
 import { z } from 'zod'
+import { useAppToast } from '~/composables/useAppToast';
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue', 'saved'])
 const isLoading = ref(false)
-const toast = useToast()
+const { toastError, toastSuccess } = useAppToast()
 
 const defaultSchema = z.object({
   created_at: z.string(),
@@ -99,9 +100,8 @@ const save = async () => {
     const { error } = await supabase.from('transactions')
       .upsert({ ...state.value })
     if (!error) {
-      toast.add({
+      toastSuccess({
         'title': 'Transaction saved',
-        'icon': 'i-heroicons-check-circle'
       })
       isOpen.value = false
       emit('saved')
@@ -109,11 +109,9 @@ const save = async () => {
     }
     throw error
   } catch (e) {
-    toast.add({
+    toastError({
       title: 'Transaction not saved',
-      description: e.message,
-      icon: 'i-heroicons-exclamation-circle',
-      color: 'red'
+      description: e.message
     })
   } finally {
     isLoading.value = false
