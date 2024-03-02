@@ -9,7 +9,7 @@
         <UAvatar src="https://avatars.githubusercontent.com/u/739984?v=4"
                  alt="Avatar" />
 
-        <template #account="{ item }">
+        <template #account>
           <div class="text-left">
             <p>
               Signed in as
