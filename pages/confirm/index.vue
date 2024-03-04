@@ -1,13 +1,13 @@
 <template>
-<Ucard>
-  <template #header>
-      Sign in...
-  </template>
+  <UCard>
+    <template #header>
+      Signing in...
+    </template>
 
-  Wait a moment while we sign you in...
-</Ucard>
+    Wait a moment while we sign you in...
+  </UCard>
 </template>
 
 <script setup>
-useIsUserLoggedIn()
+useRedirectIfAuthenticated()
 </script>
