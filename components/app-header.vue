@@ -1,15 +1,14 @@
 <template>
-  <header class="flex justify-between items-center mt-8">
-    <nuxt-link to="/"
-               class="text-xl font-bold">Finance Tracker</nuxt-link>
+  <header class="flex justify-between items-center mt-10">
+    <NuxtLink to="/" class="text-xl font-bold">
+      Finance Tracker
+    </NuxtLink>
     <div>
-      <UDropdown :items="items"
-                 :ui="{ item: { disabled: 'cursor-text select-text' }, width: 'w-64' }"
-                 v-if="user">
-        <UAvatar src="https://avatars.githubusercontent.com/u/739984?v=4"
-                 alt="Avatar" />
+      <client-only>
+      <UDropdown :items="items" :ui="{ item: { disabled: 'cursor-text select-text' }, width: 'w-64' }" v-if="user">
+        <UAvatar :src="url" alt="Avatar" />
 
-        <template #account>
+        <template #account="{}">
           <div class="text-left">
             <p>
               Signed in as
@@ -23,10 +22,10 @@
         <template #item="{ item }">
           <span class="truncate">{{ item.label }}</span>
 
-          <UIcon :name="item.icon"
-                 class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto" />
+          <UIcon :name="item.icon" class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto" />
         </template>
       </UDropdown>
+    </client-only>
     </div>
   </header>
 </template>
@@ -34,6 +33,8 @@
 <script setup>
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const { url } = useAvatarUrl()
+
 const items = [
   [{
     slot: 'account',
@@ -41,11 +42,11 @@ const items = [
   }], [{
     label: 'Settings',
     icon: 'i-heroicons-cog-8-tooth',
-    click: () => navigateTo('/settings/profile')
+    onClick: () => navigateTo('/settings/profile')
   }, {
     label: 'Sign out',
     icon: 'i-heroicons-arrow-left-on-rectangle',
-    click: async () => {
+    onClick: async () => {
       await supabase.auth.signOut()
       return navigateTo('/login')
     }

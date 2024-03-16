@@ -2,7 +2,7 @@
   <UModal v-model="isOpen">
     <UCard>
       <template #header>
-        Add Transaction
+        {{ isEditing ? 'Edit' : 'Add' }} Transaction
       </template>
       <UForm :state="state"
              :schema="schema"
@@ -48,10 +48,13 @@
                     class="mb-4">
           <USelect placeholder="category"
                    :options="category"
-                   v-model="state.category"
-                   />
+                   v-model="state.category" />
         </UFormGroup>
-        <UButton type="submit" color="black" variant="solid" label="Save" :loading="isLoading" />
+        <UButton type="submit"
+                 color="black"
+                 variant="solid"
+                 label="Save"
+                 :loading="isLoading" />
       </UForm>
 
     </UCard>
@@ -63,11 +66,17 @@ import { category, transactionsType } from '~/constants.js'
 import { z } from 'zod'
 import { useAppToast } from '~/composables/useAppToast';
 
-const props = defineProps({ modelValue: Boolean })
+const props = defineProps({
+  modelValue: Boolean, transaction: {
+    type: Object,
+    required: false
+  }
+})
 const emit = defineEmits(['update:modelValue', 'saved'])
 const isLoading = ref(false)
 const { toastError, toastSuccess } = useAppToast()
 
+const isEditing = computed(() => !!props.transaction)
 const defaultSchema = z.object({
   created_at: z.string(),
   description: z.string().optional(),
@@ -98,7 +107,10 @@ const save = async () => {
   isLoading.value = true
   try {
     const { error } = await supabase.from('transactions')
-      .upsert({ ...state.value })
+    .upsert({
+        ...state.value,
+        id: props.transaction?.id
+      })
     if (!error) {
       toastSuccess({
         'title': 'Transaction saved',
@@ -118,26 +130,37 @@ const save = async () => {
   }
 }
 
-const initialState = {
-  type: "Income",
+const initialState = isEditing.value ? {
+  type: props.transaction.type,
+  amount: props.transaction.amount,
+  created_at: props.transaction.created_at.split('T')[0],
+  description: props.transaction.description,
+  category: props.transaction.category
+} : {
+  type: undefined,
   amount: 0,
   created_at: undefined,
   description: undefined,
   category: undefined
 }
-const state = ref({
-  ...initialState
-})
-const resetForm = () =>{
-Object.assign(state.value, initialState)
-form.value.clear()
+const state = ref(isEditing.value ? {
+  type: props.transaction.type,
+  amount: props.transaction.amount,
+  created_at: props.transaction.created_at.split('T')[0],
+  description: props.transaction.description,
+  category: props.transaction.category
+} : { ...initialState })
+
+const resetForm = () => {
+  Object.assign(state.value, initialState)
+  form.value.clear()
 }
 
 const isOpen = computed({
   get: () => props.modelValue,
   set: (value) => {
-    if(!value) resetForm()
+    if (!value) resetForm()
     emit('update:modelValue', value)
   }
-  })
+})
 </script>

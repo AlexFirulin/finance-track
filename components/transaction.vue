@@ -14,11 +14,10 @@
     <div class="flex items-center justify-end space-x-2">
       <div>{{ currency }}</div>
       <div>
-        <ClientOnly>
         <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
           <UButton color="white" variant="ghost" trailing-icon="i-heroicons-ellipsis-horizontal" :loading="isLOADING"/>
+          <TransactionModal v-model="isOpen" :transaction="transaction" @saved="emit('edited')" />
         </UDropdown>
-      </ClientOnly>
       </div>
     </div>
   </div>
@@ -30,7 +29,7 @@ import { useAppToast } from "~/composables/useAppToast"
 const props = defineProps({
   transaction: Object
 })
-const emit = defineEmits(['deleted'])
+const emit = defineEmits(['deleted','edited'])
 const isLOADING = ref(false)
 const { toastError, toastSuccess } = useAppToast()
 const supabase = useSupabaseClient()
@@ -66,7 +65,7 @@ const items = [
     {
       label: 'Edit',
       icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => console.log('Edit')
+      click: () => isOpen.value = true
     },
     {
       label: 'Delete',

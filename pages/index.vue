@@ -58,7 +58,7 @@
       <Transaction v-for="transaction in transactionOnDay"
                    :key="transaction.id"
                    :transaction="transaction"
-                   @deleted="refresh()" />
+                   @edited="refresh()" />
     </div>
   </section>
   <USkeleton class="h-8 w-full mb-2"
