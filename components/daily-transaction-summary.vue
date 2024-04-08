@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
       {{ date }}
     </div>
-    <div class="flex items-center justify-end mr-10">
+    <div class="flex items-center justify-end mr-8">
       {{ currency }}
     </div>
   </div>
